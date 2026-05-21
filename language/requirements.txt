@@ -1,5 +1,0 @@
-argostranslate
-huggingface-hub
-sentencepiece
-sacremoses
-transformers
