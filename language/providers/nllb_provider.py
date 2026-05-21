@@ -15,9 +15,23 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 try:
-    from language_utils import canonical_lang
-except Exception:  # package-relative fallback
-    from ..language_utils import canonical_lang
+    from language.constants import DEFAULT_NLLB_LOCAL_NAME, DEFAULT_NLLB_MODEL_ID, PROVIDER_ID_NLLB
+    from language.paths import MODELS_DIR
+except ImportError:
+    try:
+        from ..constants import DEFAULT_NLLB_LOCAL_NAME, DEFAULT_NLLB_MODEL_ID, PROVIDER_ID_NLLB
+        from ..paths import MODELS_DIR
+    except ImportError:
+        from constants import DEFAULT_NLLB_LOCAL_NAME, DEFAULT_NLLB_MODEL_ID, PROVIDER_ID_NLLB
+        from paths import MODELS_DIR
+
+try:
+    from language.language_utils import canonical_lang
+except Exception:
+    try:
+        from ..language_utils import canonical_lang
+    except Exception:
+        from language_utils import canonical_lang
 
 NLLB_LANGUAGE_CODES: Dict[str, str] = {
     "en": "eng_Latn",
@@ -40,8 +54,9 @@ NLLB_LANGUAGE_CODES: Dict[str, str] = {
     "th": "tha_Thai",
 }
 
-DEFAULT_NLLB_MODEL_ID = "facebook/nllb-200-distilled-600M"
-DEFAULT_NLLB_LOCAL_NAME = "facebook_nllb-200-distilled-600M"
+# Reuse loaded models across provider instances and roundtrip stages.
+# This prevents repeated "Loading weights" messages when tests translate many spans.
+_NLLB_MODEL_CACHE: Dict[Tuple[str, str], Tuple[object, object]] = {}
 
 
 def safe_model_name(model_id: str) -> str:
@@ -52,12 +67,12 @@ def safe_model_name(model_id: str) -> str:
 class Provider:
     """Local NLLB provider. Uses CPU by default unless device is provided."""
 
-    models_dir: str | Path = "semantic/language/models"
+    models_dir: str | Path = MODELS_DIR
     model_id: str = DEFAULT_NLLB_MODEL_ID
     local_name: Optional[str] = None
     device: Optional[str] = None  # None, "cpu", "cuda"
     max_length: int = 128
-    name: str = "nllb"
+    name: str = PROVIDER_ID_NLLB
 
     _tokenizer: object = field(default=None, init=False, repr=False)
     _model: object = field(default=None, init=False, repr=False)
@@ -82,6 +97,13 @@ class Provider:
             raise RuntimeError(
                 f"NLLB model not found at {path}. Download it with provider_model_manager.py install-nllb-pair/install-nllb-bundle."
             )
+
+        cache_key = (str(path.resolve()), str(self.device or "cpu"))
+        cached = _NLLB_MODEL_CACHE.get(cache_key)
+        if cached is not None:
+            self._tokenizer, self._model = cached
+            return
+
         try:
             from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
         except Exception as e:
@@ -97,6 +119,7 @@ class Provider:
                 self._model.to(self.device)
             except Exception as e:
                 raise RuntimeError(f"Could not move NLLB model to device {self.device!r}: {e!r}") from e
+        _NLLB_MODEL_CACHE[cache_key] = (self._tokenizer, self._model)
 
     def translate_texts(self, texts: List[str], *, source_language: str, target_language: str) -> List[str]:
         src = canonical_lang(source_language)
@@ -132,3 +155,6 @@ class Provider:
             )
             out.append(tok.batch_decode(generated, skip_special_tokens=True)[0])
         return out
+
+
+NLLBTranslationProvider = Provider

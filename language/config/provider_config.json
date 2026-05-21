@@ -1,0 +1,257 @@
+{
+  "version": 2,
+  "default_provider_chain": [
+    "static_dictionary",
+    "argos",
+    "nllb"
+  ],
+  "official_offline_providers": [
+    "argos",
+    "nllb"
+  ],
+  "excluded_from_official_defaults": {
+    "marian": "Removed from official stack due to prompt-fragment hallucination risk."
+  },
+  "cloud_fallback_enabled": false,
+  "recommended_language_codes": [
+    "en",
+    "ja",
+    "es",
+    "fr",
+    "de",
+    "it",
+    "pt",
+    "ko",
+    "zh",
+    "ru",
+    "ar",
+    "hi",
+    "nl",
+    "pl",
+    "tr",
+    "id",
+    "vi",
+    "th"
+  ],
+  "starter_bundle": {
+    "name": "lightweight",
+    "pairs": [
+      {
+        "source_language": "en",
+        "target_language": "ja"
+      },
+      {
+        "source_language": "ja",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "es"
+      },
+      {
+        "source_language": "es",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "fr"
+      },
+      {
+        "source_language": "fr",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "de"
+      },
+      {
+        "source_language": "de",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "ko"
+      },
+      {
+        "source_language": "ko",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "zh"
+      },
+      {
+        "source_language": "zh",
+        "target_language": "en"
+      }
+    ]
+  },
+  "full_bundle": {
+    "name": "full",
+    "pairs": [
+      {
+        "source_language": "en",
+        "target_language": "ja"
+      },
+      {
+        "source_language": "ja",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "es"
+      },
+      {
+        "source_language": "es",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "fr"
+      },
+      {
+        "source_language": "fr",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "de"
+      },
+      {
+        "source_language": "de",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "it"
+      },
+      {
+        "source_language": "it",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "pt"
+      },
+      {
+        "source_language": "pt",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "ko"
+      },
+      {
+        "source_language": "ko",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "zh"
+      },
+      {
+        "source_language": "zh",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "ru"
+      },
+      {
+        "source_language": "ru",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "ar"
+      },
+      {
+        "source_language": "ar",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "hi"
+      },
+      {
+        "source_language": "hi",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "nl"
+      },
+      {
+        "source_language": "nl",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "pl"
+      },
+      {
+        "source_language": "pl",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "tr"
+      },
+      {
+        "source_language": "tr",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "id"
+      },
+      {
+        "source_language": "id",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "vi"
+      },
+      {
+        "source_language": "vi",
+        "target_language": "en"
+      },
+      {
+        "source_language": "en",
+        "target_language": "th"
+      },
+      {
+        "source_language": "th",
+        "target_language": "en"
+      }
+    ]
+  },
+  "argos": {
+    "python_package": "argostranslate",
+    "models_dir": "C:\\A1111\\stable-diffusion-webui\\extensions\\sd-webui-prompt-translator\\models\\argos",
+    "auto_install_dependency": false,
+    "auto_download_models": false
+  },
+  "nllb": {
+    "python_packages": [
+      "transformers",
+      "sentencepiece",
+      "huggingface_hub"
+    ],
+    "models_dir": "C:\\A1111\\stable-diffusion-webui\\extensions\\sd-webui-prompt-translator\\models",
+    "default_model": "facebook/nllb-200-distilled-600M",
+    "auto_install_dependency": false,
+    "auto_download_models": false,
+    "install_torch": false
+  },
+  "quality": {
+    "enabled": true,
+    "mode": "prompt",
+    "compare_providers": [
+      "static_dictionary",
+      "argos",
+      "nllb"
+    ]
+  }
+}

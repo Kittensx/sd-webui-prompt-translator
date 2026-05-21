@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "exact": [
+    "1boy",
+    "1girl",
+    "2boys",
+    "2girls",
+    "absurdres",
+    "best quality",
+    "explicit",
+    "highres",
+    "masterpiece",
+    "official art",
+    "questionable",
+    "safe",
+    "sensitive",
+    "solo",
+    "ultra detailed"
+  ],
+  "prefix": [
+    "<embedding:",
+    "<hypernet:",
+    "<lora:",
+    "<lyco:",
+    "embedding:"
+  ]
+}

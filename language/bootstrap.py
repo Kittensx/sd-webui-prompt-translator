@@ -3,27 +3,49 @@ from __future__ import annotations
 """
 Reusable bootstrap helpers for the language module.
 
-Use this from the extension, standalone scripts, or tests to create expected
-folders and starter files without installing dependencies or downloading models.
+Creates expected runtime folders and starter files without installing dependencies
+or downloading large models.
 """
 
 from pathlib import Path
 from typing import Dict, Iterable
 
-LANGUAGE_ROOT = Path(__file__).resolve().parent
+try:
+    from .constants import PROTECTED_KEYWORD_AND, PROTECTED_KEYWORD_BREAK
+    from .paths import (
+        ALL_RUNTIME_DIRS,
+        CUSTOM_DICTIONARY_PATH,
+        PROTECTED_TERMS_PATH,
+        PROVIDER_CONFIG_PATH,
+    )
+except ImportError:
+    try:
+        from language.constants import PROTECTED_KEYWORD_AND, PROTECTED_KEYWORD_BREAK
+        from language.paths import (
+            ALL_RUNTIME_DIRS,
+            CUSTOM_DICTIONARY_PATH,
+            PROTECTED_TERMS_PATH,
+            PROVIDER_CONFIG_PATH,
+        )
+    except ImportError:
+        from constants import PROTECTED_KEYWORD_AND, PROTECTED_KEYWORD_BREAK
+        from paths import (
+            ALL_RUNTIME_DIRS,
+            CUSTOM_DICTIONARY_PATH,
+            PROTECTED_TERMS_PATH,
+            PROVIDER_CONFIG_PATH,
+        )
 
-REQUIRED_DIRS = [
-    LANGUAGE_ROOT / "models",
-    LANGUAGE_ROOT / "models" / "argos",
-    LANGUAGE_ROOT / "models" / "nllb",
-    LANGUAGE_ROOT / "dictionaries",
-    LANGUAGE_ROOT / "cache",
-    LANGUAGE_ROOT / "config",
-]
+REQUIRED_DIRS = ALL_RUNTIME_DIRS
 
 DEFAULT_FILES: Dict[Path, str] = {
-    LANGUAGE_ROOT / "dictionaries" / "custom_dictionary.json": "{}\n",
-    LANGUAGE_ROOT / "dictionaries" / "protected_terms.json": "{\n  \"BREAK\": \"BREAK\",\n  \"AND\": \"AND\"\n}\n",
+    CUSTOM_DICTIONARY_PATH: "{}\n",
+    PROTECTED_TERMS_PATH: (
+        "{\n"
+        f'  "{PROTECTED_KEYWORD_BREAK}": "{PROTECTED_KEYWORD_BREAK}",\n'
+        f'  "{PROTECTED_KEYWORD_AND}": "{PROTECTED_KEYWORD_AND}"\n'
+        "}\n"
+    ),
 }
 
 
@@ -41,16 +63,16 @@ def ensure_default_files(files: Dict[Path, str] | None = None, *, overwrite: boo
 
 
 def ensure_provider_config(*, overwrite: bool = False) -> Path:
-    config_path = LANGUAGE_ROOT / "config" / "provider_config.json"
+    config_path = PROVIDER_CONFIG_PATH
     if config_path.exists() and not overwrite:
         return config_path
     try:
         from .provider_model_manager import write_provider_config_template
     except Exception:
         try:
-            from provider_model_manager import write_provider_config_template  # type: ignore
-        except Exception as exc:
-            raise RuntimeError("Could not import provider_model_manager to write provider config") from exc
+            from language.provider_model_manager import write_provider_config_template
+        except Exception:
+            from language.providers.provider_model_manager import write_provider_config_template  # type: ignore
     write_provider_config_template(config_path)
     return config_path
 
