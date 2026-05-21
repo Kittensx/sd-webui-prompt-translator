@@ -1,0 +1,26 @@
+[
+  {
+    "source_language": "en",
+    "target_language": "ja",
+    "source": "duck",
+    "target": "アヒル",
+    "provider": "local_import",
+    "source_name": "sample_en_ja"
+  },
+  {
+    "source_language": "en",
+    "target_language": "ja",
+    "source": "lady",
+    "target": "女性",
+    "provider": "local_import",
+    "source_name": "sample_en_ja"
+  },
+  {
+    "source_language": "en",
+    "target_language": "ja",
+    "source": "dog",
+    "target": "犬",
+    "provider": "local_import",
+    "source_name": "sample_en_ja"
+  }
+]

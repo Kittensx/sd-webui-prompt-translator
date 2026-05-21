@@ -21,7 +21,7 @@ LANGUAGE_DIR = EXTENSION_ROOT / "language"
 if str(LANGUAGE_DIR) not in sys.path:
     sys.path.insert(0, str(LANGUAGE_DIR))
 
-from prompt_translator_service import PromptTranslatorService, register_a1111_bridge
+from language.translation.prompt_translator_service import PromptTranslatorService, register_a1111_bridge
 
 SERVICE = PromptTranslatorService(extension_root=EXTENSION_ROOT)
 BRIDGE_STATUS = register_a1111_bridge(SERVICE)

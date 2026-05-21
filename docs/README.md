@@ -629,3 +629,15 @@ python test_language_backend.py --models-dir ./models --cache-db ./semantic/lang
 ```
 
 The runner always continues after individual failures and exits with status code 0. Check the `summary.failed` field in the JSON report when you want to gate a release.
+
+---
+
+# Roundtrip Translation Tests
+
+For beta validation, see:
+
+```text
+docs/ROUNDTRIP_TESTING.md
+```
+
+The roundtrip test harness can compare providers by translating prompts through a language chain, back-translating each stage to English, and checking whether protected prompt syntax survives.

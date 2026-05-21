@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "installed_count": 1,
+  "dictionaries": [
+    {
+      "path": "C:\\A1111\\stable-diffusion-webui\\extensions\\sd-webui-prompt-translator\\dictionaries\\installed\\en_ja.sample.json",
+      "name": "en_ja.sample",
+      "source_language": "en",
+      "target_language": "ja",
+      "provider": "local",
+      "record_count": 3,
+      "enabled": true
+    }
+  ]
+}
