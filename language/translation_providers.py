@@ -266,7 +266,7 @@ def _provider_from_plugin(module_name: str, class_name: str = "Provider", **kwar
 
 
 def available_providers() -> List[str]:
-    planned = [
+    return [
         "noop",
         "debug",
         "static_dictionary",
@@ -279,16 +279,6 @@ def available_providers() -> List[str]:
         "chain:dict+argos",
         "chain:dict+argos+nllb",
     ]
-    current = [
-        "argos",
-        "nllb",
-        "static_dictionary",
-        "debug",
-        "chain:dict+nllb",
-        "chain:dict+argos",
-        "chain:dict+argos+nllb",
-    ]
-    return current
 
 
 def get_provider(name: str | None, **kwargs) -> TranslationProvider:
