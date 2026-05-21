@@ -1,89 +1,164 @@
-# Language Extension
+# SD WebUI Prompt Translator
 
-Prompt-aware multilingual translation backend for Stable Diffusion workflows.
+Parser-aware multilingual translation backend for Stable Diffusion and AI prompting systems.
 
-This project is designed for AI image prompting systems where prompts are not just plain text. Instead of blindly translating strings, the extension uses a parser-aware translation layer that preserves prompt syntax, weights, operators, LoRA tags, semantic blocks, and scheduling structures.
+Translate prompts without destroying Stable Diffusion syntax, weights, LoRA tags, embeddings, scheduling operators, semantic structures, or prompt composition logic.
+
+---
+
+# Why This Exists
+
+Traditional translators treat prompts like normal sentences.
+
+Stable Diffusion prompts are NOT normal sentences.
+
+Naive translation systems often corrupt:
+
+* prompt weights
+* emphasis syntax
+* LoRA tags
+* embeddings
+* prompt operators
+* scheduling syntax
+* semantic blocks
+* tag formatting
+* SD-specific terminology
+
+This extension was built specifically for AI image generation workflows.
+
+Instead of blindly translating strings, the system parses prompts into safe translation spans while preserving Stable Diffusion syntax and structure.
+
+---
+
+# Example
+
+## Input
+
+```text
+(cat:1.2), masterpiece, {женщина, озеро}, <lora:animeStyle:0.8>
+```
+
+## Naive Translation
+
+```text
+（猫：1.2）、傑作、{女性、湖}、<ロラ:アニメスタイル:0.8>
+```
+
+## Prompt Translator Output
+
+```text
+(cat:1.2), masterpiece, {女性, 湖}, <lora:animeStyle:0.8>
+```
+
+The extension preserves:
+
+* weights
+* syntax
+* operators
+* LoRA formatting
+* embeddings
+* prompt structures
+
+while translating only safe text spans.
 
 ---
 
 # Features
 
-* Prompt-aware translation pipeline
-* NLLB provider support
-* Argos Translate provider support
-* Smart translation routing
-* Dictionary and protected-term support
-* Parser-safe translation spans
-* Semantic prompt block preservation
-* Stable Diffusion syntax protection
-* Extension-ready install/bootstrap flow
-* Provider management system
-* Translation cache system
-* Modular architecture for future providers
+## Prompt-Aware Translation Pipeline
+
+The parser separates syntax from translatable content.
+
+```text
+prompt parser
+    ->
+protected token layer
+    ->
+provider translation
+    ->
+prompt reconstruction
+```
+
+Only valid text spans are sent to translation providers.
 
 ---
 
-# Prompt-Aware Translation
+## Protected Token System
 
-Traditional translators break Stable Diffusion prompts because they treat prompts as normal sentences.
+Stable Diffusion-specific tokens are automatically protected from accidental translation.
 
-This extension separates:
-
-```python
-prompt_parser -> understands syntax
-translator    -> translates only text spans
-```
-
-The parser identifies which parts are safe to translate.
-
-Example:
+Examples:
 
 ```text
-(cat:1.2), lake, {утка, озеро, женщина}
+masterpiece
+best quality
+1girl
+score_9
+BREAK
+AND
+<lora:model:0.8>
+embedding:name
 ```
 
-Becomes:
+Protected tokens bypass providers entirely and are restored during prompt reconstruction.
 
-```text
-(猫:1.2), 湖, {アヒル, 湖, 女性}
-```
+---
 
-without corrupting:
+## Dictionary Support
 
-* weights
-* brackets
-* syntax
-* operators
-* grouped prompt structures
+Supports:
+
+* SD tag dictionaries
+* user dictionaries
+* custom translation overrides
+* multilingual dictionaries
+* NSFW tag dictionaries
+* offline dictionary routing
+
+Dictionary layers can override provider outputs for more Stable Diffusion-friendly translations.
+
+---
+
+## Smart Translation Routing
+
+The backend supports multiple translation providers and routing strategies.
+
+Current providers include:
+
+| Provider     | Offline | Notes                                 |
+| ------------ | ------- | ------------------------------------- |
+| NLLB         | Yes     | High quality multilingual translation |
+| Argos        | Yes     | Lightweight local translation         |
+| Dictionary   | Yes     | Rule-based SD tag translation         |
+| Smart Router | Hybrid  | Automatically selects providers       |
 
 ---
 
 # Syntax Protection
 
-The parser preserves:
+The parser preserves Stable Diffusion structures including:
 
 ```text
-(...)
-[...]
-{...}
-<lora:name:weight>
+(cat:1.2)
+[de-emphasis]
+{grouped prompts}
+<lora:model:0.8>
 <embedding:name>
 BREAK
 AND
-weights like :1.2
+scheduled prompts
+alternate prompts
 pipes |
-scheduled syntax
-alternate/random syntax
-semantic %%...%% blocks
+%%semantic blocks%%
 ```
 
-Translation only occurs on valid text spans.
+Translation only occurs on safe text spans.
 
 ---
 
 # Architecture
 
-## Core Parser Interface
+## Core Prompt Span System
 
 ```python
 @dataclass
@@ -97,22 +172,32 @@ class PromptSpan:
 parse_prompt_for_translation(text) -> list[PromptSpan]
 ```
 
-This keeps the translation backend decoupled from the parser implementation.
+This architecture keeps the translation system decoupled from parser logic.
 
-Future versions can directly integrate with a full prompt parser or semantic prompt system.
+The backend is designed for:
+
+* Stable Diffusion
+* A1111
+* Forge
+* ComfyUI
+* semantic prompt systems
+* future AI prompt pipelines
 
 ---
 
-# Providers
+# Modular Provider Architecture
 
-Currently supported:
+Providers are modular and registry-driven.
 
-* NLLB
-* Argos
-* Smart
-* Dictionary
+The system supports:
 
-Additional providers may exist as scaffolding but are intentionally hidden until validated.
+* provider plugins
+* provider fallback
+* provider routing
+* cache integration
+* future provider expansion
+
+Additional providers may exist as scaffolding but remain hidden until validated.
 
 ---
 
@@ -126,14 +211,22 @@ Place the extension inside:
 stable-diffusion-webui/extensions/
 ```
 
+Example:
+
+```text
+stable-diffusion-webui/extensions/sd-webui-prompt-translator
+```
+
 Then restart the UI.
 
-The extension bootstrap:
+The bootstrap system automatically:
 
 * creates required folders
-* installs lightweight dependencies
-* initializes cache/config files
+* initializes configs
 * prepares provider directories
+* creates cache storage
+* creates protected token storage
+* prepares dictionary paths
 
 ---
 
@@ -147,9 +240,9 @@ docs/INSTALL_MODELS.md
 
 for:
 
-* NLLB installation
-* Argos model installation
-* manual model setup
+* NLLB setup
+* Argos installation
+* offline model configuration
 * provider configuration
 
 Large models are intentionally NOT bundled with the repository.
@@ -160,42 +253,65 @@ Large models are intentionally NOT bundled with the repository.
 
 ```text
 language/
-├── bootstrap.py
-├── prompt_translation_parser.py
-├── translation_cache.py
-├── provider_model_manager.py
-├── translation_providers.py
+├── bootstrap/
+├── constants/
+├── core/
 ├── dictionaries/
-├── cache/
 ├── models/
-│   ├── nllb/
-│   └── argos/
+├── parser/
+├── providers/
+├── protected_tokens/
+├── routing/
+├── services/
+├── translation/
+├── utils/
+└── cache/
 ```
 
 ---
 
 # Design Goals
 
-* Parser-aware translation
-* Non-destructive prompt handling
+* parser-aware translation
 * Stable Diffusion compatibility
-* Modular provider architecture
-* Lightweight extension integration
-* Portable standalone backend support
-* Future semantic prompt integration
+* non-destructive prompt handling
+* semantic prompt preservation
+* modular provider architecture
+* offline/local inference support
+* lightweight extension integration
+* future semantic prompt compatibility
+
+---
+
+# Current Focus
+
+Current development priorities:
+
+* parser-safe translation
+* protected token expansion
+* multilingual SD dictionaries
+* provider stabilization
+* semantic prompt compatibility
+* translation quality improvements
+* offline inference workflows
+* extension integration
 
 ---
 
 # Future Plans
 
-* Full semantic prompt parser integration
-* Advanced tokenizer-aware translation
-* Multi-stage translation pipelines
-* Translation quality scoring
-* Batch prompt translation
-* Automatic provider fallback
-* Translation memory improvements
-* Additional local/offline providers
+Planned future features include:
+
+* semantic parser integration
+* tokenizer-aware translation
+* multi-stage translation pipelines
+* translation quality scoring
+* batch translation
+* automatic provider fallback
+* translation memory improvements
+* additional local providers
+* ComfyUI integration improvements
+* advanced SD tag routing
 
 ---
 
@@ -203,13 +319,7 @@ language/
 
 Active development.
 
-The project currently focuses on:
-
-* parser-safe translation
-* provider stabilization
-* model management
-* extension integration
-* prompt syntax preservation
+The project is currently transitioning toward a modular AI prompt-language middleware architecture designed for generative AI systems.
 
 ---
 
