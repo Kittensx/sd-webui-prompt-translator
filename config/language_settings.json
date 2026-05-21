@@ -1,0 +1,13 @@
+{
+  "user_language": "en",
+  "source_language": "auto",
+  "target_language": "('Japanese', 'ja')",
+  "provider_mode": "nllb",
+  "translation_mode": "('Prompt-safe', 'prompt')",
+  "auto_detect_source": true,
+  "cache_enabled": true,
+  "show_provider_comparison": true,
+  "prefer_replace_selection": true,
+  "argos_bundle": "lightweight",
+  "nllb_model": "facebook/nllb-200-distilled-600M"
+}
